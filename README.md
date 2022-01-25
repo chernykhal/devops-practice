@@ -10,3 +10,4 @@
    *_override.tf(ex. 2021-01-01_override.tf)
    *_override.tf.json(ex. 2021-01-01_override.json)
 6. файлы .terraformrc и terraform.rc
+7. Седьмой пункт
