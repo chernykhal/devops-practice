@@ -6,6 +6,7 @@
 
 ![image](https://user-images.githubusercontent.com/42215603/152379912-88acd18f-809d-440f-b305-beca84e5b331.png)
 
-5.8c928e835(git log -S'func providerSource' --oneline, git show 8c928e835)
+5. 8c928e835(git log -S'func providerSource' --oneline, git show 8c928e835)
 6. 78b122055, 52dbf9483, 41ab0aef7, 66ebff90c, 8364383c3 (git grep -n globalPluginDirs, git log -L :globalPluginDirs:plugins.go --oneline)
 7. Martin Atkins <mart@degeneration.co.uk>(git log -S'synchronizedWriters' --oneline, git show 5ac311e2a)
+
