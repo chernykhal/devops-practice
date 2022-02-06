@@ -1,12 +1,30 @@
-## Решение задания к занятию «2.4. Инструменты Git»
-1. aefead2207ef7e2aa5dc81a34aedf0cad4c32545 Update CHANGELOG.md(git log aefea);
-2. v0.12.23(git log 85024d3)
-3. 56cd7859e05c36c06b56d013b55a252d0bb7e158(git show b8d720^)
-4. git log v0.12.23..v0.12.24 --oneline
+## Решение задания к занятию "3.1. Работа в терминале, лекция 1"
+1. По умолчанию выделено: 1024МБ ОЗУ, 2 ядра, 64гб памяти
+2. Чтобы добавить память или ядер нужно прописать следующие команды в конфигурации вагранта:
+```Vagrantfile
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+  ```
+3.  HISTSIZE(862)
 
-![image](https://user-images.githubusercontent.com/42215603/152379912-88acd18f-809d-440f-b305-beca84e5b331.png)
+    ignoreboth - шорткат для двух команд ignorespaces и ignoredups, которые не сохраняют комманды начинающиеся на пробелы и дубликаты в истории
+4. {} - шаблон использующийся в циклах, функциях, условных операторах(1091)
+5. touch {000001..100000}.txt
+   Не удастся создать, так как слишком длинный список аргументов
+   
+6. Проверяет есть ли каталог /tmp
+7. mkdir /tmp/new_bash/
 
-5. 8c928e835(git log -S'func providerSource' --oneline, git show 8c928e835)
-6. 78b122055, 52dbf9483, 41ab0aef7, 66ebff90c, 8364383c3 (git grep -n globalPluginDirs, git log -L :globalPluginDirs:plugins.go --oneline)
-7. Martin Atkins <mart@degeneration.co.uk>(git log -S'synchronizedWriters' --oneline, git show 5ac311e2a)
-
+   cp /bin/bash /tmp/new_bash/
+   
+   PATH=/tmp/new_bash/:$PATH
+   
+   vagrant@vagrant:~$ type -a bash
+   
+   bash is /tmp/new_bash/bash
+   
+   bash is /usr/bin/bash
+   
+   bash is /bin/bash
