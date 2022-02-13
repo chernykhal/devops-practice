@@ -17,7 +17,7 @@ PID    COMM               FD ERR PATH
 646    irqbalance          6   0 /proc/irq/15/smp_affinity
 832    vminfo              4   0 /var/run/utmp
 ```
-6. 
+6. /proc/sys/kernel/{ostype, hostname, osrelease, version, domainname}
 7. 
 && -  условный оператор AND - Если команда отрабатывает первая часть команды успешно отработает, то выполнится вторая часть, 
 
@@ -36,4 +36,5 @@ STAT
 Ss
 R+
 ```
-
+S*(S,S+,Ss,Ssl,Ss+) - Процессы ожидающие завершения (прерываемый сон)
+I*(I,I<) - фоновые процессы ядра
