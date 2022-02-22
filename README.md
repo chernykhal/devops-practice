@@ -147,4 +147,39 @@ vagrant@vagrant:~$ dmesg | grep virtualization
 [    2.790776] systemd[1]: Detected virtualization oracle.
 ```
 5.
+fs.nr_open = 1048576 - это максимальное число открытых дескрипторов для системы.
 
+Максимальный предел
+```
+vagrant@vagrant:~$ cat /proc/sys/fs/file-max
+9223372036854775807
+```
+
+мягкий лимит на пользователя(можно увеличить и уменьшить)
+```
+vagrant@vagrant:~$ ulimit -Sn
+1024
+```
+
+жесткий лимит на пользователя (можно только уменьшить)
+```
+vagrant@vagrant:~$ ulimit -Hn
+1048576
+```
+6.
+```
+root@vagrant:~# ps -e |grep sleep
+   2020 pts/2    00:00:00 sleep
+root@vagrant:~# nsenter --target 2020 --pid --mount
+root@vagrant:/# ps
+    PID TTY          TIME CMD
+      2 pts/0    00:00:00 bash
+     11 pts/0    00:00:00 ps
+```
+7.
+Происходит определение функции :, которая после определение запускается, пораждая два процесса самой себя.
+
+Так как был достигнут лимит, то произошла блокировка
+```
+[  448.074314] cgroup: fork rejected by pids controller in /user.slice/user-1000.slice/session-3.scope
+```
