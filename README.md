@@ -1,90 +1,63 @@
-1. 
+1.
+2.
 ```
-alexander@alexander:~$ ifconfig
-enp3s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.1.2  netmask 255.255.255.0  broadcast 192.168.1.255
-        inet6 fe80::fb63:3963:df8e:c05e  prefixlen 64  scopeid 0x20<link>
-        ether f0:2f:74:cf:46:10  txqueuelen 1000  (Ethernet)
-        RX packets 849163  bytes 1157511282 (1.1 GB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 370450  bytes 34588761 (34.5 MB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-        device memory 0xfc500000-fc51ffff  
+root@vagrant:/home/vagrant# echo "dummy" >> /etc/modules
+        
+root@vagrant:/home/vagrant# echo "options dummy numdummies=2" > /etc/modprobe.d/dummy.conf
+        
+root@vagrant:/home/vagrant# cat /etc/network/interfaces
+	# interfaces(5) file used by ifup(8) and ifdown(8)
+	# Include files from /etc/network/interfaces.d:
+	source-directory /etc/network/interfaces.d
+	
+	auto dummy0
+	iface dummy0 inet static
+        address 10.2.2.2/32
+        pre-up ip link add dummy0 type dummy
+        post-down ip link del dummy0
+        
+systemctl restart networking
 
-lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-        inet 127.0.0.1  netmask 255.0.0.0
-        inet6 ::1  prefixlen 128  scopeid 0x10<host>
-        loop  txqueuelen 1000  (Local Loopback)
-        RX packets 521  bytes 56320 (56.3 KB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 521  bytes 56320 (56.3 KB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+ip r a 192.168.10.0/24 dev dummy0
+ip r a 192.168.11.0/24 via 10.2.2.2
+ip r a 192.168.11.0/30 via 10.2.2.2	
+
+root@vagrant:/home/vagrant# ip r s
+	default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100 
+	10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15 
+	10.0.2.2 dev eth0 proto dhcp scope link src 10.0.2.15 metric 100 
+	192.168.10.0/24 dev dummy0 scope link 
+	192.168.11.0/30 via 10.2.2.2 dev dummy0 
+	192.168.11.0/24 via 10.2.2.2 dev dummy0 
 ```
-Команды для просмотра сетевых интерфейсов в линуксе:
- - ifconfig
- - ip link show
-Команды для просмотра сетевых интерфейсов в винде:
- - ipconfig /all
-
-2. 
-Протокол обнаружения соседей (англ. Neighbor Discovery Protocol, NDP)
-
-Инструменты для работы с соседями:
- - ndptool 
- - ip
-3. 
-Для работы с виртуальными сетями есть инструмент vlan в линуксе
-
-Пример конфигурации:
+3.
 ```
-auto vlan1400
-iface vlan1400 inet static
-        address 192.168.1.1
-        netmask 255.255.255.0
-        vlan_raw_device eth0
+root@vagrant:/home/vagrant# ss -npta
+	State        Recv-Q       Send-Q              Local Address:Port               Peer Address:Port        Process                                                         
+	LISTEN       0            4096                      0.0.0.0:111                     0.0.0.0:*            users:(("rpcbind",pid=591,fd=4),("systemd",pid=1,fd=71))       
+	LISTEN       0            4096                127.0.0.53%lo:53                      0.0.0.0:*            users:(("systemd-resolve",pid=592,fd=13))                      
+	LISTEN       0            128                       0.0.0.0:22                      0.0.0.0:*            users:(("sshd",pid=814,fd=3))                                  
+	ESTAB        0            0                       10.0.2.15:22                     10.0.2.2:50748        users:(("sshd",pid=16914,fd=4),("sshd",pid=16865,fd=4))        
+	LISTEN       0            4096                         [::]:111                        [::]:*            users:(("rpcbind",pid=591,fd=6),("systemd",pid=1,fd=78))       
+	LISTEN       0            128                          [::]:22                         [::]:*            users:(("sshd",pid=814,fd=4)) 
 ```
+Процесс с PID 591 rpcbind (демон, сопоставляющий универсальные адреса и номера программ RPC)  слушает на порту 111 (sunrpc) как по IPv4 так и IPv6.
+
 4.
-Виды агрегации сетевых интерфейсов:
- - статический (на Cisco mode on);
- - динамический (на Cisco mode active);
-
-Опции балансировки:
- - по MAC-адресу отправителя или MAC-адресу получателя или учитывая оба адреса
- - по IP-адресу отправителя или IP-адресу получателя или учитывая оба адреса
- - по номеру порта отправителя или номеру порта получателя или учитывая оба порта
-
-Пример конфигурации:
 ```
-auto bond0
+root@vagrant:/home/vagrant# ss -puan
+	State        Recv-Q       Send-Q               Local Address:Port               Peer Address:Port       Process                                                         
+	UNCONN       0            0                    127.0.0.53%lo:53                      0.0.0.0:*           users:(("systemd-resolve",pid=592,fd=12))                      
+	UNCONN       0            0                   10.0.2.15%eth0:68                      0.0.0.0:*           users:(("systemd-network",pid=395,fd=15))                      
+	UNCONN       0            0                          0.0.0.0:111                     0.0.0.0:*           users:(("rpcbind",pid=591,fd=5),("systemd",pid=1,fd=77))       
+	UNCONN       0            0                             [::]:111                        [::]:*           users:(("rpcbind",pid=591,fd=7),("systemd",pid=1,fd=79))   
+```
 
-iface bond0 inet static
-    address 10.31.1.5
-    netmask 255.255.255.0
-    network 10.31.1.0
-    gateway 10.31.1.254
-    bond-slaves eth0 eth1
-    bond-mode active-backup
-    bond-miimon 100
-    bond-downdelay 200
-    bond-updelay 200
+```
+root@vagrant:/home/vagrant# ss -puan sport = 100
+	State               Recv-Q              Send-Q                           Local Address:Port                           Peer Address:Port             Process             
+	UNCONN              0                   0                                      0.0.0.0:100                                 0.0.0.0:*                 users:(("nc",pid=17781,fd=3))
 ```
 5.
- - в сети с маской /29 всего может быть 6 адресов
- - 32 подсети можно получить с маской /29 внутри сети с маской /24
- - 10.10.10.0/29, 10.10.10.8/29, 10.10.10.16/29..10.10.10.248/29
+![screenshot](https://user-images.githubusercontent.com/42215603/159746513-def0b47c-23f5-4364-9734-608efcf727cf.png)
 
-6.
-Подсети /26 по 64 хоста подойдут для этой задачи.
-
-7.
-Команды для просмотра ARP в линуксе:
- - arp
- 
-Команды для просмотра ARP в винде:
- - arp -a
- 
-Для удаления одной записи:
- - arp -d 192.168.5.254
- 
-Для удаления полной таблицы:
- - ip neigh flush all
